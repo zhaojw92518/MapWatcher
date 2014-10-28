@@ -1,6 +1,7 @@
 package org.umbrella.MapWatcher;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Type;
 import java.util.LinkedList;
 import java.util.LinkedList;
 import java.util.TreeMap;
@@ -10,14 +11,15 @@ public class ValueWatcher {
 	
 	private Object local_instance = null;
 	private Class<?> local_class = null;
-	private String local_type = null, local_name = null;
+	private Type local_type = null;
+	private String local_name = null;
 	private LinkedList<ValueWatcher> attrs = new LinkedList<>();
 	
 	public ValueWatcher(){
 		
 	}
 	
-	public ValueWatcher(Object in_instance, Class<?> in_class, String in_type, String in_name){
+	public ValueWatcher(Object in_instance, Class<?> in_class, Type in_type, String in_name){
 		local_instance = in_instance;
 		local_type = in_type;
 		local_class = in_class;
@@ -29,8 +31,14 @@ public class ValueWatcher {
 				try {
 					cur_field.setAccessible(true);
 					Object cur_instance = cur_field.get(local_instance);
-					String cur_type = cur_field.getType().getName();
-					Class<?> cur_class = obj_can_watch_in(cur_instance);
+					Type cur_type = cur_field.getType();
+					Class<?> cur_class = null;
+					if(!TypeDealer.is_primitive_type(cur_type) && cur_instance != null){
+						cur_class = get_obj_class(cur_instance);
+						if(cur_class.isEnum()){
+							cur_class = null;
+						}
+					}
 					attrs.add(new ValueWatcher(cur_instance, cur_class, cur_type, cur_field.getName()));
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
@@ -57,7 +65,7 @@ public class ValueWatcher {
 		return return_result;
 	}
 	
-	private Class<?> obj_can_watch_in(Object in_obj){
+	private Class<?> get_obj_class(Object in_obj){
 		Class<?> return_result = null;
 		try {
 			return_result = Class.forName(in_obj.getClass().getName());
@@ -66,9 +74,20 @@ public class ValueWatcher {
 		}
 		return return_result;
 	}
+		
+	private String get_instance_str(){
+		String return_result = null;
+		if(local_instance == null){
+			return_result = "null";
+		}
+		else{
+			return_result = local_instance.toString();
+		}
+		return return_result;
+	}
 	
 	public String toString(){
-		return local_name + " " + local_type + " " + local_instance.toString();
+		return local_name + " " + local_type + " " + get_instance_str();
 	}
 	
 	public boolean is_can_watch_in(){
