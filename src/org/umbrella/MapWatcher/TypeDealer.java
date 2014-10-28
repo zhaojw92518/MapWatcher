@@ -15,6 +15,7 @@ public class TypeDealer {
         primitive_types.add(Double.class);
         primitive_types.add(Void.class);
         primitive_types.add(Boolean.class);
+        primitive_types.add(String.class);
         
         primitive_types.add(int.class);
         primitive_types.add(char.class);

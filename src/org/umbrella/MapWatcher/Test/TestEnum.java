@@ -1,4 +1,4 @@
-package org.umbrella.MapWatcher;
+package org.umbrella.MapWatcher.Test;
 
 public enum TestEnum {
 	aaa,bbb,ccc;
