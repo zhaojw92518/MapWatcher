@@ -21,5 +21,6 @@ public class MapWatcher {
 		}
 		ValueWatcher watcher_01 = new ValueWatcher(test_collection, "test_collection");
 		watcher_01.std_out_print();
+		new WatcherUI(300, 400);
 	}
 }
