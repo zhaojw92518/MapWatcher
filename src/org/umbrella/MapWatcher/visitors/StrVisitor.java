@@ -18,22 +18,21 @@ public class StrVisitor implements ValueWatcherVisitor<String> {
 		System.out.println(indent_str + in_str);
 	}
 	
-	private ValueWatcher bind_watcher = null;
 	
-	public StrVisitor(ValueWatcher in_watcher) {
-		bind_watcher = in_watcher;
+	public StrVisitor() {
+		
 	}
 	
 	@Override
-	public String visit(ValueWatcher in_watcher) {
-		indent_println(bind_watcher.toString());
+	public String visit(String in_name, Class<?> in_class, Object in_obj) {
+		indent_println(in_name + " " + in_class.getSimpleName() + " " + in_obj.toString());
 		return null;
 	}
 
 	@Override
 	public String visit_attrs(LinkedList<ValueWatcher> in_attrs) {
 		for(ValueWatcher cur_attr: in_attrs){
-			bind_watcher.run_visitor(this);
+			cur_attr.run_visitor(this);
 		}
 		return null;
 	}
@@ -41,7 +40,7 @@ public class StrVisitor implements ValueWatcherVisitor<String> {
 	@Override
 	public String visit_vector(LinkedList<ValueWatcher> in_vector) {
 		for(ValueWatcher cur_obj: in_vector){
-			bind_watcher.run_visitor(this);
+			cur_obj.run_visitor(this);
 		}
 		return null;
 	}
@@ -51,10 +50,10 @@ public class StrVisitor implements ValueWatcherVisitor<String> {
 		Integer i = 0;
 		for(DataPair cur_pair: in_map){
 			indent_println("[" + i.toString() + "]");
-			inc_indent();
+			//inc_indent();
 			cur_pair.key.run_visitor(this);;
 			cur_pair.value.run_visitor(this);;
-			dec_indent();
+			//dec_indent();
 			i++;
 		}
 		return null;

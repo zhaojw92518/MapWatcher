@@ -179,7 +179,7 @@ public class ValueWatcher {
 	
 	
 	public void run_visitor(ValueWatcherVisitor<?> in_visitor){
-		in_visitor.visit(this);
+		in_visitor.visit(local_name, local_class, local_instance);
 		in_visitor.before_visit();
 		if(local_collection_type == CollectionType.none){
 			in_visitor.visit_attrs(attrs);

@@ -16,13 +16,12 @@ public class MapWatcher {
 	public static void main(String[] args){
 		TypeDealer.init_types();
 		TreeMap<String, TestClass> test_collection = new TreeMap<>();
-		print_inherit_tree(test_collection.getClass());
 		for(Integer i = 0; i < 10; i++){
 			test_collection.put(i.toString(), new TestClass(i.toString()));
 		}
 		ValueWatcher watcher_01 = new ValueWatcher(test_collection, "test_collection");
 		//watcher_01.std_out_print();
-		StrVisitor str_visitor = new StrVisitor(watcher_01);
+		StrVisitor str_visitor = new StrVisitor();
 		watcher_01.run_visitor(str_visitor);
 		new WatcherUI(300, 400);
 	}
