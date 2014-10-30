@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.umbrella.MapWatcher.visitors.ValueWatcherVisitor;
+
 public class ValueWatcher {
 	private static TreeMap<String, LinkedList<Field>> class_attr_map = new TreeMap<>();
 	
@@ -175,61 +177,32 @@ public class ValueWatcher {
 		return return_result;
 	}
 	
-	private static StringBuffer indent_str = new StringBuffer();
-	private static void inc_indent(){
-		indent_str.append('\t');
-	}
-	private static void dec_indent(){
-		indent_str.deleteCharAt(indent_str.length() - 1);
-	}
 	
-	private void indent_println(String in_str){
-		System.out.println(indent_str + in_str);
+	public void run_visitor(ValueWatcherVisitor<?> in_visitor){
+		in_visitor.visit(this);
+		in_visitor.before_visit();
+		if(local_collection_type == CollectionType.none){
+			in_visitor.visit_attrs(attrs);
+		}
+		else if(local_collection_type == CollectionType.list ||
+				local_collection_type == CollectionType.set){
+			in_visitor.visit_vector(vector_collect);
+		}
+		else if(local_collection_type == CollectionType.map){
+			in_visitor.visit_map(map_collect);
+		}
+		in_visitor.after_visit();
 	}
 	
 	public void std_out_print(){
-		indent_println(this.toString());
-		if(is_can_watch_in()){
-			inc_indent();
-			switch (local_collection_type) {
-			case none:
-				for(ValueWatcher cur_attr: attrs){
-					cur_attr.std_out_print();
-				}
-				break;
-			case list:
-				for(ValueWatcher cur_obj: vector_collect){
-					cur_obj.std_out_print();
-				}
-				break;
-			case set:
-				for(ValueWatcher cur_obj: vector_collect){
-					cur_obj.std_out_print();
-				}
-				break;
-			case map:
-				Integer i = 0;
-				for(DataPair cur_pair: map_collect){
-					indent_println("[" + i.toString() + "]");
-					inc_indent();
-					cur_pair.key.std_out_print();
-					cur_pair.value.std_out_print();
-					dec_indent();
-					i++;
-				}
-			default:
-				break;
-			}
-			
-			dec_indent();
-		}
+		
 	}
 	
 	private enum CollectionType {
 		none,list,set,map;
 	}
 	
-	private class DataPair{
+	public class DataPair{
 		public ValueWatcher key = null, value = null;
 		public DataPair(ValueWatcher in_key, ValueWatcher in_value){
 			key = in_key;
