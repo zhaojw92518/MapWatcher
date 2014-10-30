@@ -178,27 +178,18 @@ public class ValueWatcher {
 	}
 	
 	
-	public void run_visitor(ValueWatcherVisitor<?> in_visitor){
-		in_visitor.visit(local_name, local_class, local_instance);
-		in_visitor.before_visit();
-		if(local_collection_type == CollectionType.none){
-			in_visitor.visit_attrs(attrs);
-		}
-		else if(local_collection_type == CollectionType.list ||
-				local_collection_type == CollectionType.set){
-			in_visitor.visit_vector(vector_collect);
-		}
-		else if(local_collection_type == CollectionType.map){
-			in_visitor.visit_map(map_collect);
-		}
-		in_visitor.after_visit();
+	public Object run_visitor(ValueWatcherVisitor in_visitor){
+		return in_visitor.visit(
+					local_name, 
+					local_class, 
+					local_instance, 
+					local_collection_type, 
+					attrs, 
+					vector_collect, 
+					map_collect);		
 	}
 	
-	public void std_out_print(){
-		
-	}
-	
-	private enum CollectionType {
+	public enum CollectionType {
 		none,list,set,map;
 	}
 	

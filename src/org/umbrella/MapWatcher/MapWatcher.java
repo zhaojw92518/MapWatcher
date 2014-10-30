@@ -2,8 +2,12 @@ package org.umbrella.MapWatcher;
 
 import java.util.TreeMap;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.umbrella.MapWatcher.SwingUI.WatcherUI;
 import org.umbrella.MapWatcher.Test.TestClass;
 import org.umbrella.MapWatcher.visitors.StrVisitor;
+import org.umbrella.MapWatcher.visitors.TreeVisitor;
 
 public class MapWatcher {
 	public static void print_inherit_tree(Class<?> in_class){
@@ -20,9 +24,31 @@ public class MapWatcher {
 			test_collection.put(i.toString(), new TestClass(i.toString()));
 		}
 		ValueWatcher watcher_01 = new ValueWatcher(test_collection, "test_collection");
-		//watcher_01.std_out_print();
 		StrVisitor str_visitor = new StrVisitor();
 		watcher_01.run_visitor(str_visitor);
-		new WatcherUI(300, 400);
+		//TreeVisitor tree_visitor = new TreeVisitor();
+		//new WatcherUI(300, 400, (DefaultMutableTreeNode) watcher_01.run_visitor(tree_visitor));
+	}
+	
+	private ValueWatcher local_value_watcher = null;
+	public MapWatcher(Object in_obj, String in_name){
+		local_value_watcher = new ValueWatcher(in_obj, in_name);
+	}
+	
+	public void std_print_watcher(){
+		StrVisitor str_visitor = new StrVisitor();
+		local_value_watcher.run_visitor(str_visitor);
+	}
+	
+	public void swing_ui_watcher(int width, int height){
+		TreeVisitor tree_visitor = new TreeVisitor();
+		new WatcherUI(width, height, 
+				(DefaultMutableTreeNode) local_value_watcher.run_visitor(tree_visitor));
+	}
+	
+	public void swing_ui_watcher(){
+		TreeVisitor tree_visitor = new TreeVisitor();
+		new WatcherUI(300, 400, 
+				(DefaultMutableTreeNode) local_value_watcher.run_visitor(tree_visitor));
 	}
 }
